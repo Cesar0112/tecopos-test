@@ -16,7 +16,7 @@ services:
       context: .
       dockerfile: apps/sso/Dockerfile
     ports:
-      - "3001:3000"
+      - "3002:3002"
     environment:
       DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
       JWT_SECRET: ${JWT_SECRET}
@@ -28,7 +28,7 @@ services:
       context: .
       dockerfile: apps/bank/Dockerfile
     ports:
-      - "3002:3000"
+      - "3000:3000"
     environment:
       JWT_SECRET: ${JWT_SECRET}
 
@@ -37,7 +37,7 @@ services:
       context: .
       dockerfile: apps/gateway/Dockerfile
     ports:
-      - "3000:3000"
+      - "3001:3001"
     environment:
       JWT_SECRET: ${JWT_SECRET}
     depends_on:

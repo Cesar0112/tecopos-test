@@ -13,7 +13,7 @@ export class GatewayController {
     try {
       const response = await lastValueFrom(
         this.http.request({
-          url: `http://sso:3000${req.path.replace('/auth', '')}`,
+          url: `http://sso:3002${req.path.replace('/auth', '')}`,
           method: req.method,
           data: req.body,
           headers: req.headers,
