@@ -1,9 +1,11 @@
-import { Controller, All, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, All, Req, Res, UseGuards, Post, Body } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { HttpService } from '@nestjs/axios';
 import type { Request, Response } from 'express';
-import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { JwtAuthGuard } from './jwt-auth.guard';
 import { lastValueFrom } from 'rxjs';
 
+@ApiTags('Gateway')
 @Controller()
 export class GatewayController {
   constructor(private readonly http: HttpService) { }
@@ -22,13 +24,25 @@ export class GatewayController {
     return headers;
   }
 
-  // =========================================
-  //  AUTH SERVICE
-  // =========================================
+  /*  @Post('auth/login')
+    @ApiOperation({ summary: 'Login de usuario' })
+    @ApiResponse({ status: 200, description: 'Login exitoso, devuelve JWT' })
+    @ApiResponse({ status: 401, description: 'Credenciales inválidas' })
+    async loginDoc(@Req() req: Request, @Res() res: Response) {
+      return await this.authProxy(req, res);
+    }
+    @Post('auth/register')
+    @ApiOperation({ summary: 'Registro de usuario' })
+    @ApiResponse({ status: 201, description: 'Usuario creado exitosamente' })
+    @ApiResponse({ status: 400, description: 'Datos inválidos' })
+    async registerDoc(@Body() body: any, @Res() res: Response) {
+      return res.json({ message: 'Proxy hacia Auth Service /register' });
+    }
+  */
   @All('auth/*')
+  //@ApiExcludeEndpoint()
   async authProxy(@Req() req: Request, @Res() res: Response) {
     const url = `${process.env.SSO_URL}${req.path}`;
-    console.log("Proxying to Auth Service:", url);
     try {
       const response = await lastValueFrom(
         this.http.request({
@@ -47,11 +61,10 @@ export class GatewayController {
     }
   }
 
-  // =========================================
-  //  BANK SERVICE
-  // =========================================
+
   @UseGuards(JwtAuthGuard)
   @All('bank/*')
+  //@ApiExcludeEndpoint()
   async bankProxy(@Req() req: Request, @Res() res: Response) {
     const url = `${process.env.BANK_URL}${req.path}`;
 
