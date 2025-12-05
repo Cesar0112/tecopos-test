@@ -1,13 +1,20 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './users/user.entity';
+import { User } from './user.entity';
 import { ConfigModule } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { SsoService } from './sso.service';
+import { JwtStrategy } from './jwt.strategy';
+import { SsoController } from './sso.controller';
 
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '24h' },
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -19,7 +26,9 @@ import { ConfigModule } from '@nestjs/config';
       synchronize: process.env.NODE_ENV !== 'production',
     }),
     TypeOrmModule.forFeature([User]),
-    AuthModule,],
-  providers: [],
+  ],
+  providers: [SsoService, JwtStrategy],
+  controllers: [SsoController],
+  exports: [SsoService],
 })
 export class SsoModule { }

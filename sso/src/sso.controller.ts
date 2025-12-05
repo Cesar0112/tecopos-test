@@ -1,12 +1,25 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Request } from '@nestjs/common';
+import { RegisterDto, LoginDto } from './dto';
+import { JwtAuthGuard } from './jwt-auth.guard';
 import { SsoService } from './sso.service';
 
-@Controller()
+@Controller('auth')
 export class SsoController {
-  constructor(private readonly ssoService: SsoService) {}
+  constructor(private readonly ssoService: SsoService) { }
 
-  @Get()
-  getHello(): string {
-    return this.ssoService.getHello();
+  @Post('register')
+  register(@Body() dto: RegisterDto) {
+    return this.ssoService.register(dto);
+  }
+
+  @Post('login')
+  login(@Body() dto: LoginDto) {
+    return this.ssoService.login(dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  me(@Request() req) {
+    return req.user;
   }
 }
