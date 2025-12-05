@@ -5,6 +5,7 @@ import {
 } from '@nestjs/swagger';
 import { BankModule } from './bank.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(BankModule);
@@ -14,6 +15,22 @@ async function bootstrap() {
     .setVersion('1.0')
     .addBearerAuth()
     .build();
+
+
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
+    transformOptions: { enableImplicitConversion: true },
+    exceptionFactory: (errors) => {
+      // opcional: formatea el error de validación
+      const formatted = errors.map(err => ({
+        field: err.property,
+        errors: Object.values(err.constraints || {}),
+      }));
+      return new BadRequestException({ message: 'Validation failed', details: formatted });
+    },
+  }));
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

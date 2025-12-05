@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
+import { OperationDto } from './dto/operation.dto';
+import { AccountDto } from './dto/account.dto';
 
 @Injectable()
 export class BankService {
 
-  private readonly accounts = [
+  private readonly accounts: AccountDto[] = [
     { id: 1, type: 'checking', balance: 1200, currency: 'USD' },
     { id: 2, type: 'savings', balance: 3000, currency: 'USD' },
   ];
 
-  private readonly operations = [
+  private readonly operations: OperationDto[] = [
     { id: 1, accountId: 1, type: 'deposit', amount: 500, date: '2025-01-01' },
     { id: 2, accountId: 1, type: 'withdrawal', amount: 200, date: '2025-01-05' },
     { id: 3, accountId: 2, type: 'deposit', amount: 3000, date: '2025-02-01' },
