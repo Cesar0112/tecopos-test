@@ -10,7 +10,9 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
 
-    HttpModule,
+    HttpModule.register({
+      proxy: false as const,
+    }),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
     }),

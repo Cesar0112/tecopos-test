@@ -6,40 +6,70 @@ import { lastValueFrom } from 'rxjs';
 
 @Controller()
 export class GatewayController {
-  constructor(private http: HttpService) { }
+  constructor(private readonly http: HttpService) { }
 
+  private forwardHeaders(req: Request) {
+    const headers: Record<string, string> = {};
+
+    if (req.headers['authorization']) {
+      headers['authorization'] = req.headers['authorization'];
+    }
+
+    if (req.headers['content-type']) {
+      headers['content-type'] = req.headers['content-type'];
+    }
+
+    return headers;
+  }
+
+  // =========================================
+  //  AUTH SERVICE
+  // =========================================
   @All('auth/*')
   async authProxy(@Req() req: Request, @Res() res: Response) {
+    const url = `${process.env.SSO_URL}${req.path}`;
+    console.log("Proxying to Auth Service:", url);
     try {
       const response = await lastValueFrom(
         this.http.request({
-          url: `http://sso:3002${req.path.replace('/auth', '')}`,
+          url,
           method: req.method,
           data: req.body,
-          headers: req.headers,
-        }),
+          headers: this.forwardHeaders(req),
+        })
       );
-      res.status(response.status).json(response.data);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
+      return res.status(response.status).json(response.data);
+    } catch (error: any) {
+      console.error(error.response?.data || error.message);
+      return res
+        .status(error.response?.status || 500)
+        .json(error.response?.data || { message: error.message });
     }
   }
 
+  // =========================================
+  //  BANK SERVICE
+  // =========================================
   @UseGuards(JwtAuthGuard)
   @All('bank/*')
   async bankProxy(@Req() req: Request, @Res() res: Response) {
+    const url = `${process.env.BANK_URL}${req.path}`;
+
     try {
       const response = await lastValueFrom(
         this.http.request({
-          url: `http://bank:3000${req.path.replace('/bank', '')}`,
+          url,
           method: req.method,
           data: req.body,
-          headers: req.headers,
-        }),
+          headers: this.forwardHeaders(req),
+        })
       );
-      res.status(response.status).json(response.data);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
+      return res.status(response.status).json(response.data);
+    } catch (error: any) {
+      console.error(error.response?.data || error.message);
+      return res
+        .status(error.response?.status || 500)
+        .json(error.response?.data || { message: error.message });
     }
   }
 }
