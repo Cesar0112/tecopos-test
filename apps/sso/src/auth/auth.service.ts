@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
@@ -16,28 +16,34 @@ export class AuthService {
     ) { }
 
     async register(dto: RegisterDto) {
-        const hashed = await bcrypt.hash(dto.password, 10);
-        const user = this.usersRepo.create({
-            email: dto.email,
-            password: hashed,
-        });
+        const exists = await this.usersRepo.findOne({ where: { email: dto.email } });
+        if (exists) throw new BadRequestException('Usuario ya existe');
 
-        await this.usersRepo.save(user);
-        return this.signToken(user.id, user.email);
+        const hashed = await bcrypt.hash(dto.password, 10);
+
+        const user = await this.usersRepo.save(
+            this.usersRepo.create({
+                email: dto.email,
+                password: hashed,
+            }),
+        );
+
+        return await this.signToken(user.id, user.email);
     }
 
     async login(dto: LoginDto) {
-        const user = await this.usersRepo.findOne({
-            where: { email: dto.email },
-        });
+        const user = await this.usersRepo.findOne({ where: { email: dto.email } });
+        if (!user) throw new UnauthorizedException();
 
-        if (!user || !(await bcrypt.compare(dto.password, user.password))) {
-            throw new UnauthorizedException('Credenciales inválidas');
-        }
-        return this.signToken(user.id, user.email);
+        const ok = await bcrypt.compare(dto.password, user.password);
+        if (!ok) throw new UnauthorizedException();
+
+        return await this.signToken(user.id, user.email);
     }
 
-    private signToken(userId: number, email: string) {
-        return this.jwt.signAsync({ sub: userId, email });
+    private async signToken(userId: number, email: string) {
+        const token = await this.jwt.signAsync({ sub: userId, email });
+
+        return { access_token: token };
     }
 }
