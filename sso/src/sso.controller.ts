@@ -2,7 +2,7 @@ import { Controller, Post, Body, UseGuards, Get, Request, HttpCode, HttpStatus }
 import { RegisterDto, LoginDto } from './dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { SsoService } from './sso.service';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Controller('auth')
 export class SsoController {
@@ -10,6 +10,7 @@ export class SsoController {
 
   @Post('register')
   @ApiOperation({ summary: 'Registro de usuario' })
+  @ApiBody({ type: RegisterDto })
   @ApiResponse({ status: 201, description: 'Usuario creado exitosamente' })
   @ApiResponse({ status: 400, description: 'Datos inválidos' })
   register(@Body() dto: RegisterDto) {
@@ -18,6 +19,7 @@ export class SsoController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
+  @ApiBody({ type: LoginDto })
   @ApiOperation({ summary: 'Login de usuario' })
   @ApiResponse({ status: 200, description: 'Login exitoso, devuelve JWT' })
   @ApiResponse({ status: 401, description: 'Credenciales inválidas' })
