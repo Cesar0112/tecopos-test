@@ -4,6 +4,7 @@ import { BankService } from './bank.service';
 import { JwtStrategy } from './jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
+import { WebhookService } from './webhook/webhook.service';
 
 @Module({
   imports: [
@@ -17,6 +18,6 @@ import { ConfigModule } from '@nestjs/config';
     }),
   ],
   controllers: [BankController],
-  providers: [BankService, JwtStrategy],
+  providers: [BankService, JwtStrategy, WebhookService],
 })
 export class BankModule { }

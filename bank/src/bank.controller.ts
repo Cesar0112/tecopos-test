@@ -1,7 +1,7 @@
-import { BadRequestException, Controller, Get, HttpCode, HttpStatus, Param, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { BankService } from './bank.service';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse, ApiOperation, ApiParam, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiParam, ApiTags, ApiUnauthorizedResponse, OmitType } from '@nestjs/swagger';
 import { AccountDto } from './dto/account.dto';
 import { OperationDto } from './dto/operation.dto';
 
@@ -33,5 +33,22 @@ export class BankController {
       throw new BadRequestException('ID de cuenta inválido');
     }
     return this.bankService.getOperationsForAccount(Number(id));
+  }
+
+
+  @Post("create-operation/:accountId")
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.OK)
+  @ApiBody({ type: OmitType(OperationDto, ['accountId']) })
+  @ApiOperation({ summary: 'Crear una nueva operación en una cuenta' })
+  @ApiParam({ name: 'accountId', description: 'ID numérico de la cuenta', example: 1 })
+  @ApiOkResponse({ description: 'Operación creada exitosamente', type: OperationDto })
+  @ApiBadRequestResponse({ description: 'Datos inválidos para la operación' })
+  @ApiUnauthorizedResponse({ description: 'No autorizado. Token inválido o ausente' })
+  async createOperation(@Param('accountId') id: string, @Body() dto: Omit<OperationDto, 'accountId'>) {
+    if (Number.isNaN(Number(id))) {
+      throw new BadRequestException('ID de cuenta inválido');
+    }
+    return this.bankService.createOperation(Number(id), dto);
   }
 }
