@@ -14,7 +14,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document); // → http://localhost:3000/api
+  SwaggerModule.setup('api', app, document);
   const port = process.env.PORT || 3002;
   await app.listen(port);
   console.log(`SSO is running on: http://localhost:${port}`);
