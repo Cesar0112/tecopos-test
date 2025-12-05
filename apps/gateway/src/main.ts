@@ -13,8 +13,8 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document); // → http://localhost:3000/api
-  await app.listen(3001).then(() => {
-    console.log(`Gateway is running on: http://localhost:3001`);
-  });
+  const port = process.env.PORT || 3001;
+  await app.listen(port);
+  console.log(`Gateway is running on: http://localhost:${port}`);
 }
 bootstrap();
