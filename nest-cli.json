@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/tecopos-test/src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/tecopos-test/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/tecopos-test",
+  "projects": {
+    "bank": {
+      "type": "application",
+      "root": "apps/bank",
+      "entryFile": "main",
+      "sourceRoot": "apps/bank/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/bank/tsconfig.app.json"
+      }
+    },
+    "gateway": {
+      "type": "application",
+      "root": "apps/gateway",
+      "entryFile": "main",
+      "sourceRoot": "apps/gateway/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/gateway/tsconfig.app.json"
+      }
+    },
+    "sso": {
+      "type": "application",
+      "root": "apps/sso",
+      "entryFile": "main",
+      "sourceRoot": "apps/sso/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/sso/tsconfig.app.json"
+      }
+    },
+    "tecopos-test": {
+      "type": "application",
+      "root": "apps/tecopos-test",
+      "entryFile": "main",
+      "sourceRoot": "apps/tecopos-test/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/tecopos-test/tsconfig.app.json"
+      }
+    }
+  }
+}
