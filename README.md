@@ -21,7 +21,7 @@ Microsistema dockerizado con:
 
 ```bash
 # 1. Clonar y entrar
-git clone <tu-repo>
+git clone https://github.com/Cesar0112/tecopos-test.git
 cd tecopos-test
 
 # 2. Copiar variables
