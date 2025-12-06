@@ -24,7 +24,7 @@ WORKDIR /app
 
 # Solo dependencias necesarias en producción
 COPY package.json yarn.lock ./
-RUN yarn install --production --frozen-lockfile
+RUN yarn install --production
 
 # Copiar la build
 COPY --from=builder /app/dist ./dist
