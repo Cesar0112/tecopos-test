@@ -2,10 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { SsoModule } from './sso.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import morgan from 'morgan';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(SsoModule);
 
+  app.use(morgan('combined'));
 
   const config = new DocumentBuilder()
     .setTitle('SSO')
@@ -13,6 +15,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addBearerAuth()
     .build();
+
 
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
