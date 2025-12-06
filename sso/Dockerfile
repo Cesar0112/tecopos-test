@@ -1,15 +1,14 @@
 # ============================
-# 1) Build stage
+# 1. BUILD STAGE
 # ============================
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copiar dependencias
+# Copiar archivos del proyecto
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
-# Copiar el código
 COPY . .
 
 # Compilar NestJS
@@ -17,20 +16,21 @@ RUN yarn build
 
 
 # ============================
-# 2) Run stage
+# 2. PRODUCTION STAGE
 # ============================
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Solo copiar lo necesario
+# Solo dependencias necesarias en producción
 COPY package.json yarn.lock ./
 RUN yarn install --production --frozen-lockfile
 
+# Copiar la build
 COPY --from=builder /app/dist ./dist
 
-# Puerto del microservicio
+# Variables
+ENV PORT=3002
 EXPOSE 3002
 
-# Comando para arrancar Nest
 CMD ["node", "dist/main.js"]
