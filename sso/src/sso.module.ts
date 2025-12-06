@@ -16,13 +16,13 @@ import { SsoController } from './sso.controller';
       signOptions: { expiresIn: '24h' },
     }),
     TypeOrmModule.forRoot({
-  type: 'postgres',
-  url: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-  autoLoadEntities: true,
-  }),
+      type: 'postgres',
+      url: process.env.DATABASE_URL,
+      ssl: {
+        rejectUnauthorized: false,
+      },
+      autoLoadEntities: true,
+    }),
     TypeOrmModule.forFeature([User]),
   ],
   providers: [SsoService, JwtStrategy],
