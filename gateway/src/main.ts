@@ -3,10 +3,10 @@ import { GatewayModule } from './gateway.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
-
+import morgan from "morgan";
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(GatewayModule);
-
+  app.use(morgan("combined"));
   const config = new DocumentBuilder()
     .setTitle(`Gateway API`)
     .setDescription('Proxy hacia Auth y Bank Services')
