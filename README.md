@@ -75,3 +75,11 @@ yarn run start
 - Bank directo → http://localhost:3000/api
 - Gateway + Swagger → http://localhost:3001/api
 - SSO directo → http://localhost:3002/api
+
+## Cómo probar el proyecto desplegado en Render
+
+Ten en cuenta que al estar desplegado en Render gratuitamente tienes que esperar a que los servicios respondan entre 30 y 60 segundos aproximadamente
+
+En https://tecopos-test-gateway.onrender.com está el gateway desde ahí se puede usar, pero para usar correctamente los servicios de bank y sso, mirar su documentación Swagger en https://tecopos-test-bank.onrender.com/api y en https://tecopos-test.onrender.com/api respectivamente.
+
+El proyecto se prueba desde el gateway pero usando las documentaciones de bank y sso ya que el gateway redirige las peticiones hacia los distintos microservicios

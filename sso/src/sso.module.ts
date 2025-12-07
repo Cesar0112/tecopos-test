@@ -22,6 +22,7 @@ import { SsoController } from './sso.controller';
         rejectUnauthorized: false,
       },
       autoLoadEntities: true,
+      synchronize: true,
     }),
     TypeOrmModule.forFeature([User]),
   ],
